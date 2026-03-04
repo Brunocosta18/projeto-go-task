@@ -1,4 +1,7 @@
 {
   "editor.autoClosingBrackets": "always",
-  "cSpell.words": ["Componet"]
+  "cSpell.words": [
+    "Componet",
+    "modalcontroller"
+  ]
 }
