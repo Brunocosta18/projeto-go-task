@@ -1,6 +1,9 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { ITask } from "../interfaces/task.interface";
+import { ITaskFormControls } from "../interfaces/task-form-controls.interface";
+import { TaskStatusEnum } from "../enums/task-status.unem";
+import { generateUniqueIdWithTimestamp } from "../utils/ganerate-unique-is-with-timestamp";
 @Injectable({
     providedIn: "root",
 })
@@ -16,4 +19,17 @@ export class TaskService {
     //Tarefas Concluídas
     private doneTasks$ =  new BehaviorSubject<ITask[]>([]);
     readonly doneTasks = this.doneTasks$.asObservable();
+
+    addTask(taskInfos: ITaskFormControls) {
+        const newTask: ITask = {
+            ...taskInfos,
+            status: TaskStatusEnum.TODO,
+            id: Number(generateUniqueIdWithTimestamp()),
+            comments:[],
+        };
+
+        const currentTasks = this.TodoTasks$.value;
+
+        this.TodoTasks$.next([...currentTasks, newTask]);
+    }
 }
