@@ -2,11 +2,12 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { ITask } from "../interfaces/task.interface";
 import { ITaskFormControls } from "../interfaces/task-form-controls.interface";
-import { TaskStatusEnum } from "../enums/task-status.unem";
+import { TaskStatusEnum } from "../enums/task-status.enum";
 import { generateUniqueIdWithTimestamp } from "../utils/ganerate-unique-is-with-timestamp";
 @Injectable({
     providedIn: "root",
 })
+
 export class TaskService {
     //Tarefas em A fazer
     private readonly TodoTasks$ =  new BehaviorSubject<ITask[]>([]);
@@ -31,5 +32,9 @@ export class TaskService {
         const currentTasks = this.TodoTasks$.value;
 
         this.TodoTasks$.next([...currentTasks, newTask]);
+    }
+
+    carregarListasAtuaisDeTodos() {
+        console.log('Lista de TODOS:', this.TodoTasks$.value);
     }
 }
