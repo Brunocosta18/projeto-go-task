@@ -11,12 +11,19 @@ export class TaskListSection {
   private readonly _taskService = inject(TaskService);
 
   ngOnInit() {
-    this._taskService.todoTasks.subscribe((todoList) => {
-      console.log('Lista de TODOS: ', todoList);
+  this._taskService.todoTasks.subscribe((todoList) => {
+    console.log('Lista de TODOS: ', todoList);
 
-      todoList[0].name = 'Nome Alterado'; // Modificando o nome da primeira tarefa para teste
-
-      this._taskService.carregarListasAtuaisDeTodos(); // Chamando o método para carregar as listas atuais de TODOS
-    });
-  };
+    // 1. Verifique se a lista NÃO está vazia antes de acessar o índice [0]
+    if (todoList && todoList.length > 0) {
+      
+      // Agora é seguro acessar o nome
+      todoList[0].name = 'Nome Alterado'; 
+      
+      this._taskService.carregarListasAtuaisDeTodos();
+    } else {
+      console.log('A lista ainda está vazia, aguardando tarefas...');
+    }
+  });
+}
 }
