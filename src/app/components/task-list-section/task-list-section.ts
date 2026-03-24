@@ -1,29 +1,51 @@
 import { Component, inject } from '@angular/core';
 import { TaskCard } from '../task-card/task-card';
 import { TaskService } from '../../Services/task.service';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
+import { ITask } from '../../interfaces/task.interface';
+import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'app-task-list-section',
-  imports: [TaskCard],
+  imports: [TaskCard,CdkDropList, CdkDrag, AsyncPipe],
   templateUrl: './task-list-section.html',
   styleUrl: './task-list-section.css',
 })
 export class TaskListSection {
+  todoTask: ITask [] = []; 
+  doingTask: ITask [] = []; 
+  doneTask: ITask [] = []; 
+
   private readonly _taskService = inject(TaskService);
+todoTasks: any;
 
   ngOnInit() {
   this._taskService.todoTasks.subscribe((todoList) => {
-    console.log('Lista de TODOS: ', todoList);
-
-    // 1. Verifique se a lista NÃO está vazia antes de acessar o índice [0]
-    if (todoList && todoList.length > 0) {
-      
-      // Agora é seguro acessar o nome
-      todoList[0].name = 'Nome Alterado'; 
-      
-      this._taskService.carregarListasAtuaisDeTodos();
-    } else {
-      console.log('A lista ainda está vazia, aguardando tarefas...');
-    }
+    this.todoTask = todoList;
   });
-}
+  this._taskService.doingTasks.subscribe((doingTask) => {
+    this.doingTask = doingTask;
+  });
+  this._taskService.doneTasks.subscribe((doneTask) => {
+    this.doneTask = doneTask;
+  });
+ }
+
+   drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+  }
 }

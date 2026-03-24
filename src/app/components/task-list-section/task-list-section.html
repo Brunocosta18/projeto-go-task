@@ -1,6 +1,13 @@
 <div class="bg-white p-3 mb-6 flex overflow-x-auto skrollbar-hidden">
   <!-- Coluna a fazer-->
-  <div class="flex-1 py-3 px-6 min-w-60 flex flex-col gap-6">
+  <div 
+    class="flex-1 py-3 px-6 min-w-60 flex flex-col gap-6"
+    cdkDropList
+    #todoListCdkDropList="cdkDropList"
+    [cdkDropListData]="todoTasks"
+    [cdkDropListConnectedTo]="[doneList]"
+    (cdkDropListDropped)="drop($event)"
+>
     <div class="py-2 border-b border-[#D1D5DB] flex items-center gap-1">
       <h1 class="font-bold">A fazer</h1>
       <span
@@ -10,14 +17,13 @@
     </div>
 
     <div class="flex flex-col gap-4">
-      <app-task-card />
-      <app-task-card />
-      <app-task-card />
+      @for (todoTask of todoTasks; track todoTask.id){
+        <app-task-card />
+      }
     </div>
 
     <div></div>
   </div>
-
   <!--Coluna fazendo-->
   <div class="flex-1 py-3 px-6 min-w-60 flex flex-col gap-6">
     <div class="py-2 border-b border-[#D1D5DB] flex items-center gap-1">
