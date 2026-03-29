@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { TaskCard } from '../task-card/task-card';
 import { TaskService } from '../../Services/task.service';
 import {
@@ -9,42 +9,48 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { ITask } from '../../interfaces/task.interface';
-import { AsyncPipe } from '@angular/common';
+
 @Component({
   selector: 'app-task-list-section',
-  imports: [TaskCard,CdkDropList, CdkDrag, AsyncPipe],
+  standalone: true,
+  imports: [TaskCard, CdkDropList, CdkDrag],
   templateUrl: './task-list-section.html',
   styleUrl: './task-list-section.css',
 })
-export class TaskListSection {
-  todoTask: ITask [] = []; 
-  doingTask: ITask [] = []; 
-  doneTask: ITask [] = []; 
+export class TaskListSection implements OnInit {
+  // Use exatamente estes nomes:
+  todoTasks: ITask[] = []; 
+  doingTasks: ITask[] = []; 
+  doneTasks: ITask[] = []; 
 
   private readonly _taskService = inject(TaskService);
-todoTasks: any;
 
   ngOnInit() {
-  this._taskService.todoTasks.subscribe((todoList) => {
-    this.todoTask = todoList;
-  });
-  this._taskService.doingTasks.subscribe((doingTask) => {
-    this.doingTask = doingTask;
-  });
-  this._taskService.doneTasks.subscribe((doneTask) => {
-    this.doneTask = doneTask;
-  });
- }
+    this._taskService.todoTasks.subscribe((list) => {
+      this.todoTasks = list;
+    });
+    this._taskService.doingTasks.subscribe((list) => {
+      this.doingTasks = list;
+    });
+    this._taskService.doneTasks.subscribe((list) => {
+      this.doneTasks = list;
+    });
+  }
 
-   drop(event: CdkDragDrop<string[]>) {
+  // Método drop com a tipagem correta <ITask[]> para evitar o erro NG5
+  drop(event: CdkDragDrop<ITask[]>) {
     if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      moveItemInArray(
+        event.container.data, 
+        event.previousIndex, 
+        event.currentIndex
+      );
     } else {
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
-        event.currentIndex,
+        event.currentIndex
       );
     }
   }
