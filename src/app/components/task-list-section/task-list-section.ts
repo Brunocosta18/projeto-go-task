@@ -9,36 +9,52 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { ITask } from '../../interfaces/task.interface';
+import { AsyncPipe, JsonPipe } from '@angular/common';
+import { TaskStatus } from '../../types/task-status';
+import { TaskStatusEnum } from '../../enums/task-status.enum';
 
 @Component({
   selector: 'app-task-list-section',
   standalone: true,
-  imports: [TaskCard, CdkDropList, CdkDrag],
+  imports: [TaskCard, CdkDropList, CdkDrag, AsyncPipe],
   templateUrl: './task-list-section.html',
   styleUrl: './task-list-section.css',
 })
-export class TaskListSection implements OnInit {
-  // Use exatamente estes nomes:
-  todoTasks: ITask[] = []; 
-  doingTasks: ITask[] = []; 
-  doneTasks: ITask[] = []; 
+export class TaskListSection {
+  readonly _taskService = inject(TaskService);
 
-  private readonly _taskService = inject(TaskService);
+  onCardDrop(event: CdkDragDrop<ITask[]>) {
+    this.moveCardtoColumn(event)
 
-  ngOnInit() {
-    this._taskService.todoTasks.subscribe((list) => {
-      this.todoTasks = list;
-    });
-    this._taskService.doingTasks.subscribe((list) => {
-      this.doingTasks = list;
-    });
-    this._taskService.doneTasks.subscribe((list) => {
-      this.doneTasks = list;
-    });
+    const taskId = event.item.data.id;
+    const taskCurrentStatus = event.item.data.status;
+    const droppedColumn = event.container.id; // ID da coluna onde o cartão foi solto
+
+    this.updateTaskStatus(taskId, taskCurrentStatus, droppedColumn);
+    }
+    private updateTaskStatus(taskId: string, taskCurrentStatus: TaskStatus, droppedColumn: string) {
+    let taskNextStatus: TaskStatusEnum;
+
+    switch (droppedColumn) {
+      case 'to-do-column':
+        taskNextStatus = TaskStatusEnum.TODO;
+        break; 
+      case 'doing-column':
+        taskNextStatus = TaskStatusEnum.DOING;
+        break; 
+      case 'done-column':
+        taskNextStatus = TaskStatusEnum.DONE;
+        break; 
+      default:
+        throw Error('Coluna não identificada');
+    }
+
+    this._taskService.updateTaskStatus(taskId, taskCurrentStatus, taskNextStatus);
   }
+; 
 
   // Método drop com a tipagem correta <ITask[]> para evitar o erro NG5
-  drop(event: CdkDragDrop<ITask[]>) {
+  private moveCardtoColumn(event: CdkDragDrop<ITask[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data, 

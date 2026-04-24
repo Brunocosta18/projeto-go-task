@@ -1,10 +1,9 @@
-import { TaskStatus } from "../Services/task.service";
-import { IComment } from "./comment.interface";
+import { TaskStatusEnum } from "../enums/task-status.enum"; 
 
 export interface ITask {
-    id: number;
-    name: string;
-    description: string;
-    comments: IComment[];
-    status: TaskStatus;
+  id: number;
+  name: string;
+  description: string;
+  status: TaskStatusEnum; 
+  comments: any[];
 }
