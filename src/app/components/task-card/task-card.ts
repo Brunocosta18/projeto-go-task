@@ -19,8 +19,8 @@ export class TaskCard {
   openEditTaskModal() {
     const dialogRef = this._modalControllerService.openEditTaskModal({ name: this.task.name, description: this.task.description });
 
-    dialogRef.closed.subscribe((taskForm) =>{
-      if(taskForm) {
+    dialogRef.closed.subscribe((taskForm) => {
+      if (taskForm) {
         this._taskService.updateTaskNameAndDescription(
           this.task.id,
           this.task.status,
@@ -31,12 +31,21 @@ export class TaskCard {
     })
   }
 
-openTaskCommentsModal() {
-  this.task.comments = [
-    {id: '123', description:'Comentário 1'},
-    {id: '456', description:'Comentário 2'},
-  ]
-  this._modalControllerService.openTaskCommentsModal(this.task);  
-}
+  openTaskCommentsModal() {
+
+    const dialogRef = this._modalControllerService.openCommentsModal(this.task);
+
+    dialogRef.closed.subscribe((taskCommentsChanged: any) => {
+      if (taskCommentsChanged) {
+        //atualizar a fonte de verdade
+        console.log('tarefa atualizada!', this.task);
+        this._taskService.updateTaskComments(this.task.id, this.task.status, this.task.comments);
+      }
+    });
+  }
+
+  deleteTask() {
+    this._taskService.deleteTask(this.task.id, this.task.status as any);
+  }
 
 }

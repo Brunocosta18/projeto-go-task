@@ -2,14 +2,14 @@
     <div class="p-4 flex gap-1">
         <img src="images/icon-task-star.svg" alt="" />
         <h1 class="font-semibold text-lg">Comentar tarefa</h1>
-        <img class="ml-auto cursor-pointer" src="images/icon-close.svg" alt="" />
+        <img class="ml-auto cursor-pointer" src="images/icon-close.svg" (click)="onCloseModal()" alt="" />
     </div>
 
     <div class="p-4 border-t border-[#D1D5DB]">
-        <h1 class="font-semibold text-lg gap-1">Minha nova tarefa</h1>
+        <h1 class="font-semibold text-lg gap-1">{{ _task.name }}</h1>
         <p class="font-semibold text-sm mb-2">Descrição</p>
         <p class="font-normal text-base ">
-            Essa é minha tarefa para criar meu primeiro projeto em Angular.
+            {{ _task.description }}
         </p>
     </div>
 
@@ -18,13 +18,16 @@
             <p class="font-bold text-sm">Comentários</p>
             <div class="flex items-start gap-2">
                 <div class="flex flex-col w-full">
-                    <input class="rounded-lg border border-[#d1d5db] p-3 bg-white 
-                        flex-1 text-sm font-light" type="text" placeholder="Adicione um comentário" />
-                    <p class="font-semibold text-sm text-red-600">O campo é obrigatório.</p>
+                    <input #commentInput class="rounded-lg border border-[#d1d5db] p-3 bg-white 
+                        flex-1 text-sm font-light" type="text" placeholder="Adicione um comentário"
+                        [formControl]="commentControl" />
                 </div>
-                <button class="py-3 px-4 bg-[#2A89ef] text-whiterounded-xl text-sm font-semibold cursor-pointer
-                active:translate-y-1 transition-transform duration-75 shadow-md shadow-blue-500/50" class="px-4 py-2 
-                bg-[#007bff] rounded-lg text-sm font-light text-white">Adicionar</button>
+                <button
+                    class="{{`py-3 px-4 rounded-xl text-sm font-semibold cursor pointer text-white
+                ${ commentControl.invalid ? 'bg-[#D7D8D8]' : 'bg-[#2A89EF] active:translate-y-1 transition-transform duration-75 shadow-md shadow-blue-500/50'}`}}"
+                    class="px-4 py-2 
+                bg-[#007bff] rounded-lg text-sm font-light text-white" [disabled]="commentControl.invalid"
+                    (click)="onAddComment()">Adicionar</button>
             </div>
             <div class="flex flex-col gap-5 overflow-scroll max-h-44 scrollbar-hidden">
 
@@ -34,7 +37,8 @@
                     <div class="font-light text-sm text-[#374151]">{{ comment.description }}</div>
                     <div class="{{ `flex gap-4 mb-3 ${!last ? 'mb-3' : ''}`}}">
                         <p class="font-normal text-sm text-[#9ca3af]">Comentado há 10 mim atrás</p>
-                        <p class="font-semibold text-xs underline underline-offset-2 cursor-pointer">Apagar</p>
+                        <p class="font-semibold text-xs underline underline-offset-2 cursor-pointer"
+                            (click)="onRemoveComment(comment.id)">Apagar</p>
                     </div>
                 </div>
                 <!-- End Comentário 1 -->
